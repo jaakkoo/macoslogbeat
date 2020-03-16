@@ -1,0 +1,7 @@
+/.idea
+/build
+
+.DS_Store
+/macoslogbeat
+/macoslogbeat.test
+*.pyc

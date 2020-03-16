@@ -1,0 +1,9 @@
+- key: macoslogbeat
+  title: macoslogbeat
+  description:
+  fields:
+    - name: counter
+      type: long
+      required: true
+      description: >
+        PLEASE UPDATE DOCUMENTATION
