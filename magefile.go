@@ -20,7 +20,7 @@ import (
 func init() {
 	devtools.SetBuildVariableSources(devtools.DefaultBeatBuildVariableSources)
 
-	devtools.BeatDescription = "One sentence description of the Beat."
+	devtools.BeatDescription = "MacOS unified log shipper"
 	devtools.BeatVendor = "Jaakko Aro"
 }
 

@@ -1,13 +1,17 @@
 package beater
 
 import (
+	"bufio"
+	"encoding/json"
 	"fmt"
+	"log"
+	"os/exec"
 	"time"
 
+	"github.com/bcicen/jstream"
 	"github.com/elastic/beats/libbeat/beat"
 	"github.com/elastic/beats/libbeat/common"
 	"github.com/elastic/beats/libbeat/logp"
-
 	"github.com/jaakkoo/macoslogbeat/config"
 )
 
@@ -35,8 +39,15 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 // Run starts macoslogbeat.
 func (bt *macoslogbeat) Run(b *beat.Beat) error {
 	logp.Info("macoslogbeat is running! Hit CTRL-C to stop it.")
-
+	app := "/usr/bin/log"
+	cmd := exec.Command(app, "stream", "--style=json")
 	var err error
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	bt.client, err = b.Publisher.Connect()
 	if err != nil {
 		return err
@@ -44,6 +55,10 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 
 	ticker := time.NewTicker(bt.config.Period)
 	counter := 1
+
+	cmd.Start()
+	dec := jstream.NewDecoder(bufio.NewReader(stdout), 1)
+
 	for {
 		select {
 		case <-bt.done:
@@ -51,15 +66,18 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 		case <-ticker.C:
 		}
 
-		event := beat.Event{
-			Timestamp: time.Now(),
-			Fields: common.MapStr{
-				"type":    b.Info.Name,
-				"counter": counter,
-			},
+		for mv := range dec.Stream() {
+			logEvent, _ := json.Marshal(mv)
+			event := beat.Event{
+				Timestamp: time.Now(),
+				Fields: common.MapStr{
+					"type":    b.Info.Name,
+					"counter": counter,
+					"data":    logEvent,
+				},
+			}
+			bt.client.Publish(event)
 		}
-		bt.client.Publish(event)
-		logp.Info("Event sent")
 		counter++
 	}
 }
