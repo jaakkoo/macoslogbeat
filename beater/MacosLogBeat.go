@@ -40,7 +40,8 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 func (bt *macoslogbeat) Run(b *beat.Beat) error {
 	logp.Info("macoslogbeat is running! Hit CTRL-C to stop it.")
 	app := "/usr/bin/log"
-	cmd := exec.Command(app, "stream", "--style=json")
+	cmd := exec.Command(app, "stream", "--style=json", "--predicate", "(subsystem != \"com.apple.GPUWrangler\") and (subsystem != \"com.apple.bluetooth\")")
+
 	var err error
 
 	stdout, err := cmd.StdoutPipe()
@@ -57,7 +58,9 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 	counter := 1
 
 	cmd.Start()
-	dec := jstream.NewDecoder(bufio.NewReader(stdout), 1)
+	reader := bufio.NewReader(stdout)
+	reader.ReadBytes('\n')
+	dec := jstream.NewDecoder(reader, 1)
 
 	for {
 		select {
@@ -73,7 +76,7 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 				Fields: common.MapStr{
 					"type":    b.Info.Name,
 					"counter": counter,
-					"data":    logEvent,
+					"data":    string(logEvent),
 				},
 			}
 			bt.client.Publish(event)
