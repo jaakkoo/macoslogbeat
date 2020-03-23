@@ -6295,22 +6295,10 @@ type: keyword
 None
 
 
-*`counter`*::
+*`eventMessage`*::
 +
 --
-PLEASE UPDATE DOCUMENTATION
-
-
-type: long
-
-required: True
-
---
-
-*`data`*::
-+
---
-FOO FOO
+Actual log message
 
 
 required: True

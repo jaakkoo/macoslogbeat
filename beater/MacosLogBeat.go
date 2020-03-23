@@ -2,7 +2,6 @@ package beater
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
@@ -55,10 +54,10 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 	}
 
 	ticker := time.NewTicker(bt.config.Period)
-	counter := 1
 
 	cmd.Start()
 	reader := bufio.NewReader(stdout)
+	// Read the first line from buffer because it's not json
 	reader.ReadBytes('\n')
 	dec := jstream.NewDecoder(reader, 1)
 
@@ -70,18 +69,12 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 		}
 
 		for mv := range dec.Stream() {
-			logEvent, _ := json.Marshal(mv)
 			event := beat.Event{
 				Timestamp: time.Now(),
-				Fields: common.MapStr{
-					"type":    b.Info.Name,
-					"counter": counter,
-					"data":    string(logEvent),
-				},
+				Fields:    common.MapStr(mv.Value.(map[string]interface{})),
 			}
 			bt.client.Publish(event)
 		}
-		counter++
 	}
 }
 

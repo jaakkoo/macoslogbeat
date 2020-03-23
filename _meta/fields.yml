@@ -2,12 +2,7 @@
   title: macoslogbeat
   description:
   fields:
-    - name: counter
-      type: long
+    - name: eventMessage
       required: true
       description: >
-        PLEASE UPDATE DOCUMENTATION
-    - name: data
-      required: true
-      description: >
-        FOO FOO
+        Actual log message
