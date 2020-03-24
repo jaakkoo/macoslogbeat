@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/bcicen/jstream"
@@ -35,11 +36,26 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 	return bt, nil
 }
 
+func buildArgs(excluded []string) []string {
+	args := []string{"stream", "--style=json"}
+
+	if len(excluded) == 0 {
+		return args
+	}
+
+	var subsystems []string
+	for _, subsystem := range excluded {
+		subsystems = append(subsystems, fmt.Sprintf("(subsystem != \"%s\")", subsystem))
+	}
+
+	return append(args, "--predicate", strings.Join(subsystems, " and "))
+}
+
 // Run starts macoslogbeat.
 func (bt *macoslogbeat) Run(b *beat.Beat) error {
 	logp.Info("macoslogbeat is running! Hit CTRL-C to stop it.")
 	app := "/usr/bin/log"
-	cmd := exec.Command(app, "stream", "--style=json", "--predicate", "(subsystem != \"com.apple.GPUWrangler\") and (subsystem != \"com.apple.bluetooth\")")
+	cmd := exec.Command(app, buildArgs(bt.config.ExcludedSubsystems)...)
 
 	var err error
 
@@ -57,8 +73,10 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 
 	cmd.Start()
 	reader := bufio.NewReader(stdout)
-	// Read the first line from buffer because it's not json
-	reader.ReadBytes('\n')
+	if len(bt.config.ExcludedSubsystems) > 0 {
+		// Read the first line from buffer because it's not json when predicates are applied
+		reader.ReadBytes('\n')
+	}
 	dec := jstream.NewDecoder(reader, 1)
 
 	for {

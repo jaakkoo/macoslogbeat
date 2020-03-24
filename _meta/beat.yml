@@ -5,3 +5,6 @@
 macoslogbeat:
   # Defines how often an event is sent to the output
   period: 1s
+  #excluded.subsystems:
+  #  - com.apple.bluetooth
+  #  - com.apple.GPUWrangler
