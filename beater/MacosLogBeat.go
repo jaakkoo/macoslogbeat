@@ -16,6 +16,9 @@ import (
 	"github.com/jaakkoo/macoslogbeat/config"
 )
 
+var rfc3339ms string = "2006-01-02T15:04:05.000Z0700"
+var macTimestampFormat string = "2006-01-02 15:04:05.000000Z0700"
+
 // macoslogbeat configuration.
 type macoslogbeat struct {
 	done   chan struct{}
@@ -60,12 +63,11 @@ func writeTimestamp(timestamp string, fileName string) {
 }
 
 func readTimestamp(fileName string) (timestamp time.Time, err error) {
-	layout := "2006-01-02 15:04:05.000000Z0700"
 	contents, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("Could not read contents of %s", fileName)
 	}
-	t, err := time.Parse(layout, string(contents))
+	t, err := time.Parse(rfc3339ms, string(contents))
 	if err != nil {
 		return time.Time{}, fmt.Errorf("Timestamp is malformed")
 	}
@@ -78,6 +80,16 @@ func publishEvent(bt *macoslogbeat, eventFields *common.MapStr) {
 		Fields:    *eventFields,
 	}
 	bt.client.Publish(event)
+}
+
+// Go only supports RFC 3339 with nanosecond and second precision.
+// ElasticSearch only supports RFC 3339 with milliseconds so we'll give her that!
+func getTimestampInRFC3339(timestamp string) string {
+	t, err := time.Parse(macTimestampFormat, timestamp)
+	if err != nil {
+		logp.Warn("Timestamp conversion failed")
+	}
+	return t.Format(rfc3339ms)
 }
 
 func publishLogsSince(startTime time.Time, bt *macoslogbeat) error {
@@ -94,6 +106,7 @@ func publishLogsSince(startTime time.Time, bt *macoslogbeat) error {
 		f := common.MapStr(mv.Value.(map[string]interface{}))
 		// When viewing old logs creatorActivityID gets some really crazy values that are not indexable
 		f["creatorActivityID"] = float64(0)
+		f["timestamp"] = getTimestampInRFC3339(f["timestamp"].(string))
 		publishEvent(bt, &f)
 	}
 
@@ -150,6 +163,7 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 
 		for mv := range dec.Stream() {
 			fields := common.MapStr(mv.Value.(map[string]interface{}))
+			fields["timestamp"] = getTimestampInRFC3339(fields["timestamp"].(string))
 			publishEvent(bt, &fields)
 			counter++
 			if counter%100 == 0 {
