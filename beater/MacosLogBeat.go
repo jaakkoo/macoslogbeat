@@ -62,7 +62,7 @@ func writeTimestamp(timestamp string, fileName string) {
 	}
 }
 
-func readTimestamp(fileName string) (timestamp time.Time, err error) {
+func readTimestamp(fileName string) (time.Time, error) {
 	contents, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("Could not read contents of %s", fileName)
@@ -75,6 +75,7 @@ func readTimestamp(fileName string) (timestamp time.Time, err error) {
 }
 
 func publishEvent(bt *macoslogbeat, eventFields *common.MapStr) {
+	(*eventFields)["timestamp"] = getTimestampInRFC3339((*eventFields)["timestamp"].(string))
 	event := beat.Event{
 		Timestamp: time.Now(),
 		Fields:    *eventFields,
@@ -88,6 +89,7 @@ func getTimestampInRFC3339(timestamp string) string {
 	t, err := time.Parse(macTimestampFormat, timestamp)
 	if err != nil {
 		logp.Warn("Timestamp conversion failed")
+		return timestamp
 	}
 	return t.Format(rfc3339ms)
 }
@@ -106,7 +108,6 @@ func publishLogsSince(startTime time.Time, bt *macoslogbeat) error {
 		f := common.MapStr(mv.Value.(map[string]interface{}))
 		// When viewing old logs creatorActivityID gets some really crazy values that are not indexable
 		f["creatorActivityID"] = float64(0)
-		f["timestamp"] = getTimestampInRFC3339(f["timestamp"].(string))
 		publishEvent(bt, &f)
 	}
 
@@ -146,7 +147,7 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 
 	lastPublishedLog, err := readTimestamp(path.Join(bt.config.CacheDir, timestampFile))
 	if err == nil {
-		logp.Info("Shipping old logs since %s", lastPublishedLog)
+		logp.Info("Shipping old logs since %s", lastPublishedLog.Format(rfc3339ms))
 		if err = publishLogsSince(lastPublishedLog, bt); err != nil {
 			logp.Err(err.Error())
 		} else {
@@ -163,7 +164,6 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 
 		for mv := range dec.Stream() {
 			fields := common.MapStr(mv.Value.(map[string]interface{}))
-			fields["timestamp"] = getTimestampInRFC3339(fields["timestamp"].(string))
 			publishEvent(bt, &fields)
 			counter++
 			if counter%100 == 0 {
