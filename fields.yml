@@ -4397,3 +4397,8 @@
       required: true
       description: >
         Actual log message
+    - name: timestamp
+      type: date
+      description: >
+        Log event time
+

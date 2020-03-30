@@ -6305,6 +6305,16 @@ required: True
 
 --
 
+*`timestamp`*::
++
+--
+Log event time
+
+
+type: date
+
+--
+
 [[exported-fields-process]]
 == Process fields
 
