@@ -82,7 +82,7 @@ func publishEvent(bt *macoslogbeat, eventFields *common.MapStr) {
 	delete(*eventFields, "timestamp")
 	event := beat.Event{
 		Timestamp: ts,
-		Fields:    *eventFields,
+		Fields:    common.MapStr{"unifiedlog": *eventFields},
 	}
 	bt.client.Publish(event)
 }

@@ -6292,16 +6292,209 @@ type: keyword
 [[exported-fields-macoslogbeat]]
 == macoslogbeat fields
 
-None
+Fields from macos unified logging
 
 
-*`eventMessage`*::
+
+[float]
+=== unifiedlog
+
+Relevant fields from macos unified logging
+
+
+
+*`unifiedlog.messageType`*::
++
+--
+type: keyword
+
+required: False
+
+--
+
+*`unifiedlog.traceID`*::
++
+--
+type: long
+
+required: False
+
+--
+
+*`unifiedlog.threadID`*::
++
+--
+type: long
+
+required: False
+
+--
+
+*`unifiedlog.parentActivityIdentifier`*::
++
+--
+type: integer
+
+required: False
+
+--
+
+*`unifiedlog.eventType`*::
++
+--
+One of signpostEvent, activityCreateEvent, logEvent, or timesyncEvent (others such as traceEvent and activityTransitionEvent may be possible but are very rare)
+
+
+type: keyword
+
+required: False
+
+--
+
+*`unifiedlog.senderProgramCounter`*::
++
+--
+type: integer
+
+required: False
+
+--
+
+*`unifiedlog.processImagePath`*::
++
+--
+Executable that sent the event
+
+type: keyword
+
+required: False
+
+--
+
+*`unifiedlog.subsystem`*::
++
+--
+For example com.apple.network
+
+
+type: keyword
+
+required: False
+
+--
+
+*`unifiedlog.eventMessage`*::
 +
 --
 Actual log message
 
 
+type: text
+
 required: True
+
+--
+
+*`unifiedlog.processImageUUID`*::
++
+--
+type: keyword
+
+required: False
+
+--
+
+*`unifiedlog.processID`*::
++
+--
+type: integer
+
+required: False
+
+--
+
+*`unifiedlog.formatString`*::
++
+--
+Formatstring for eventMessage, e.g. "%{foo} executed %{bar}"
+
+
+type: text
+
+required: False
+
+--
+
+*`unifiedlog.senderImageUUID`*::
++
+--
+type: keyword
+
+required: False
+
+--
+
+*`unifiedlog.activityIdentifier`*::
++
+--
+type: integer
+
+required: False
+
+--
+
+*`unifiedlog.senderImagePath`*::
++
+--
+type: keyword
+
+required: False
+
+--
+
+*`unifiedlog.senderProgramCounter`*::
++
+--
+type: long
+
+required: False
+
+--
+
+[float]
+=== backtrace.frames
+
+Backtrace, consisting of imageOffset and imageUUID
+
+
+
+*`unifiedlog.backtrace.frames.imageUUID`*::
++
+--
+type: keyword
+
+required: False
+
+--
+
+*`unifiedlog.backtrace.frames.imageOffset`*::
++
+--
+type: integer
+
+required: False
+
+--
+
+*`unifiedlog.machTimestamp`*::
++
+--
+In system ticks
+
+
+type: long
+
+required: False
 
 --
 

@@ -4391,9 +4391,89 @@
         Whether the agent was configured for authentication or not.
 - key: macoslogbeat
   title: macoslogbeat
-  description:
+  description: >
+    Fields from macos unified logging
   fields:
-    - name: eventMessage
-      required: true
+    - name: unifiedlog
+      type: group
       description: >
-        Actual log message
+        Relevant fields from macos unified logging
+      fields:
+        - name: messageType
+          required: false
+          type: keyword
+        - name: traceID
+          required: false
+          type: long
+        - name: threadID
+          required: false
+          type: long
+        - name: parentActivityIdentifier
+          required: false
+          type: integer
+        - name: eventType
+          required: false
+          type: keyword
+          description: >
+            One of signpostEvent, activityCreateEvent, logEvent, or timesyncEvent
+            (others such as traceEvent and activityTransitionEvent may be possible
+            but are very rare)
+        - name: senderProgramCounter
+          required: false
+          type: integer
+        - name: processImagePath
+          required: false
+          type: keyword
+          description:
+            Executable that sent the event
+        - name: subsystem
+          required: false
+          type: keyword
+          description: >
+            For example com.apple.network
+        - name: eventMessage
+          required: true
+          type: text
+          description: >
+            Actual log message
+        - name: processImageUUID
+          required: false
+          type: keyword
+        - name: processID
+          required: false
+          type: integer
+        - name: formatString
+          required: false
+          type: text
+          description: >
+            Formatstring for eventMessage, e.g. "%{foo} executed %{bar}"
+        - name: senderImageUUID
+          required: false
+          type: keyword
+        - name: activityIdentifier
+          required: false
+          type: integer
+        - name: senderImagePath
+          required: false
+          type: keyword
+        - name: senderProgramCounter
+          required: false
+          type: long
+        - name: backtrace.frames
+          type: group
+          fields:
+            - name: imageUUID
+              level: extended
+              required: false
+              type: keyword
+            - name: imageOffset
+              level: extended
+              required: false
+              type: integer
+          description: >
+            Backtrace, consisting of imageOffset and imageUUID
+        - name: machTimestamp
+          required: false
+          type: long
+          description: >
+            In system ticks
