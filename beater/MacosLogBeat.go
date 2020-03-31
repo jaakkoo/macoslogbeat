@@ -17,7 +17,6 @@ import (
 )
 
 var rfc3339ms string = "2006-01-02T15:04:05.000Z0700"
-var macTimestampFormat string = "2006-01-02 15:04:05.000000Z0700"
 
 // macoslogbeat configuration.
 type macoslogbeat struct {
@@ -55,8 +54,8 @@ func buildArgs(command string, excluded []string) []string {
 	return append(args, "--predicate", strings.Join(subsystems, " and "))
 }
 
-func writeTimestamp(timestamp string, fileName string) {
-	err := ioutil.WriteFile(fileName, []byte(timestamp), 0600)
+func writeTimestamp(timestamp time.Time, fileName string) {
+	err := ioutil.WriteFile(fileName, []byte(timestamp.Format(rfc3339ms)), 0600)
 	if err != nil {
 		logp.Err("Could not update cache file timestamp")
 	}
@@ -75,23 +74,26 @@ func readTimestamp(fileName string) (time.Time, error) {
 }
 
 func publishEvent(bt *macoslogbeat, eventFields *common.MapStr) {
-	(*eventFields)["timestamp"] = getTimestampInRFC3339((*eventFields)["timestamp"].(string))
+	ts, err := parseMacTimestamp((*eventFields)["timestamp"].(string))
+	if err != nil {
+		logp.Err("Cant use event timestamp, using time.Now().")
+		ts = time.Now()
+	}
+	delete(*eventFields, "timestamp")
 	event := beat.Event{
-		Timestamp: time.Now(),
+		Timestamp: ts,
 		Fields:    *eventFields,
 	}
 	bt.client.Publish(event)
 }
 
-// Go only supports RFC 3339 with nanosecond and second precision.
-// ElasticSearch only supports RFC 3339 with milliseconds so we'll give her that!
-func getTimestampInRFC3339(timestamp string) string {
+func parseMacTimestamp(timestamp string) (time.Time, error) {
+	macTimestampFormat := "2006-01-02 15:04:05.000000Z0700"
 	t, err := time.Parse(macTimestampFormat, timestamp)
 	if err != nil {
-		logp.Warn("Timestamp conversion failed")
-		return timestamp
+		return time.Time{}, fmt.Errorf("Timestamp conversion failed for '%s'", timestamp)
 	}
-	return t.Format(rfc3339ms)
+	return t, nil
 }
 
 func publishLogsSince(startTime time.Time, bt *macoslogbeat) error {
@@ -164,10 +166,11 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 
 		for mv := range dec.Stream() {
 			fields := common.MapStr(mv.Value.(map[string]interface{}))
+			eventTs, _ := parseMacTimestamp(fields["timestamp"].(string))
 			publishEvent(bt, &fields)
 			counter++
 			if counter%100 == 0 {
-				writeTimestamp(fields["timestamp"].(string), path.Join(bt.config.CacheDir, timestampFile))
+				writeTimestamp(eventTs, path.Join(bt.config.CacheDir, timestampFile))
 			}
 		}
 	}
