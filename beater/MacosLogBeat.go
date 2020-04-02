@@ -162,18 +162,23 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 		return err
 	}
 
-	lastPublishedLog, err := readTimestamp(path.Join(bt.config.CacheDir, timestampFile))
-	if err == nil {
-		logp.Info("Shipping old logs since %s", lastPublishedLog.Format(rfc3339ms))
-		if err = publishLogsSince(bt, lastPublishedLog); err != nil {
+	if lastPublish, err := readTimestamp(path.Join(bt.config.CacheDir, timestampFile)); err == nil {
+		logp.Info("Shipping old logs since %s", lastPublish.Format(rfc3339ms))
+		if err = publishLogsSince(bt, lastPublish); err != nil {
 			logp.Err(err.Error())
 		} else {
 			logp.Info("Old logs shipped")
 		}
+	} else {
+		logp.Err("Could not read last published log timestamp: %v", err)
 	}
 
 	args := buildArgs("stream", bt.config.ExcludedSubsystems)
 	logStream, err := readLogWithArgs(args, 1)
+	if err != nil {
+		return err
+	}
+
 	for event := range logStream {
 		eventTs, _ := parseMacTimestamp(event["timestamp"].(string))
 		publishEvent(bt, event)
