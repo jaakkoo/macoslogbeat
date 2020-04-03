@@ -1,6 +1,6 @@
-################### {Beat} Configuration Example #########################
+################### MacosLogBeat Configuration Example #########################
 
-############################# {Beat} ######################################
+############################# MacosLogBeat ######################################
 
 macoslogbeat:
   # Defines how often an event is sent to the output

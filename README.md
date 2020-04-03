@@ -1,18 +1,18 @@
-# {Beat}
+# MacosLogbeat
 
-Welcome to {Beat}.
+Welcome to MacosLogbeat.
 
 Ensure that this folder is at the following location:
 `${GOPATH}/src/github.com/jaakkoo/macoslogbeat`
 
-## Getting Started with {Beat}
+## Getting Started with MacosLogbeat
 
 ### Requirements
 
 * [Golang](https://golang.org/dl/) 1.7
 
 ### Init Project
-To get running with {Beat} and also install the
+To get running with MacosLogbeat and also install the
 dependencies, run the following command:
 
 ```
@@ -21,7 +21,7 @@ make setup
 
 It will create a clean git history for each major step. Note that you can always rewrite the history if you wish before pushing your changes.
 
-To push {Beat} in the git repository, run the following commands:
+To push MacosLogbeat in the git repository, run the following commands:
 
 ```
 git remote set-url origin https://github.com/jaakkoo/macoslogbeat
@@ -32,7 +32,7 @@ For further development, check out the [beat developer guide](https://www.elasti
 
 ### Build
 
-To build the binary for {Beat} run the command below. This will generate a binary
+To build the binary for MacosLogbeat run the command below. This will generate a binary
 in the same directory with the name macoslogbeat.
 
 ```
@@ -42,7 +42,7 @@ make
 
 ### Run
 
-To run {Beat} with debugging output enabled, run:
+To run MacosLogbeat with debugging output enabled, run:
 
 ```
 ./macoslogbeat -c macoslogbeat.yml -e -d "*"
@@ -51,7 +51,7 @@ To run {Beat} with debugging output enabled, run:
 
 ### Test
 
-To test {Beat}, run the following command:
+To test MacosLogbeat, run the following command:
 
 ```
 make testsuite
@@ -79,7 +79,7 @@ make update
 
 ### Cleanup
 
-To clean  {Beat} source code, run the following command:
+To clean  MacosLogbeat source code, run the following command:
 
 ```
 make fmt
@@ -94,7 +94,7 @@ make clean
 
 ### Clone
 
-To clone {Beat} from the git repository, run the following commands:
+To clone MacosLogbeat from the git repository, run the following commands:
 
 ```
 mkdir -p ${GOPATH}/src/github.com/jaakkoo/macoslogbeat
