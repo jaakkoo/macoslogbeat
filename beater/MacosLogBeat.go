@@ -3,6 +3,7 @@ package beater
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os/exec"
 	"path"
@@ -99,7 +100,7 @@ func parseMacTimestamp(timestamp string) (time.Time, error) {
 	return t, nil
 }
 
-func readLogWithArgs(commandArgs []string, skipLines int) (chan common.MapStr, error) {
+func readLogWithArgs(commandArgs []string, skipLines int) (<-chan common.MapStr, error) {
 	var err error
 	cmd := exec.Command("/usr/bin/log", commandArgs...)
 	stdout, err := cmd.StdoutPipe()
@@ -114,9 +115,10 @@ func readLogWithArgs(commandArgs []string, skipLines int) (chan common.MapStr, e
 
 	reader := bufio.NewReader(stdout)
 
-	if skipLines > 0 {
-		for i := 0; i < skipLines; i++ {
-			reader.ReadBytes('\n')
+	for i := 0; i < skipLines; i++ {
+		_, err := reader.ReadBytes('\n')
+		if err != nil {
+			return nil, fmt.Errorf("Reading from buffer failed: %w", err)
 		}
 	}
 
@@ -127,26 +129,36 @@ func readLogWithArgs(commandArgs []string, skipLines int) (chan common.MapStr, e
 			c <- common.MapStr(mv.Value.(map[string]interface{}))
 		}
 		close(c)
+		io.Copy(ioutil.Discard, stdout)
 		cmd.Wait()
 	}()
 	return c, nil
 }
 
-func publishLogsSince(bt *macoslogbeat, startTime time.Time) error {
+func publishOldLogs(bt *macoslogbeat, timeStampFile string) error {
 	var err error
+
+	lastPublish, err := readTimestamp(timeStampFile)
+	if err != nil {
+		return fmt.Errorf("could not read timestamp: %w", err)
+	}
+
 	layout := "2006-01-02 15:04:05Z0700"
 	args := append(buildArgs("show", bt.config.ExcludedSubsystems),
-		"--start", startTime.Format(layout),
+		"--start", lastPublish.Format(layout),
 		"--end", time.Now().Format(layout))
 
+	logp.Info("Publishing old logs since %s", lastPublish.Format(layout))
 	logStream, err := readLogWithArgs(args, 0)
 	if err != nil {
-		return fmt.Errorf("could not old logs %w", err)
+		return fmt.Errorf("could read not old logs %w", err)
 	}
 	for fields := range logStream {
+		// Set creatorActivityID because it gets crazy and non-indexable values when using show instead of stream
 		fields["creatorActivityID"] = float64(0)
 		publishEvent(bt, fields)
 	}
+	logp.Info("Old logs published")
 
 	return nil
 }
@@ -155,22 +167,15 @@ func publishLogsSince(bt *macoslogbeat, startTime time.Time) error {
 func (bt *macoslogbeat) Run(b *beat.Beat) error {
 	logp.Info("macoslogbeat is running! Hit CTRL-C to stop it.")
 	var err error
-	var counter int
-	timestampFile := "timestamp"
 	bt.client, err = b.Publisher.Connect()
 	if err != nil {
 		return err
 	}
 
-	if lastPublish, err := readTimestamp(path.Join(bt.config.CacheDir, timestampFile)); err == nil {
-		logp.Info("Shipping old logs since %s", lastPublish.Format(rfc3339ms))
-		if err = publishLogsSince(bt, lastPublish); err != nil {
-			logp.Err(err.Error())
-		} else {
-			logp.Info("Old logs shipped")
-		}
-	} else {
-		logp.Err("Could not read last published log timestamp: %v", err)
+	timestampFile := path.Join(bt.config.CacheDir, "timestamp")
+	if err = publishOldLogs(bt, timestampFile); err != nil {
+		logp.Err("Problems when publishing old logs: %v", err)
+
 	}
 
 	args := buildArgs("stream", bt.config.ExcludedSubsystems)
@@ -179,15 +184,24 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 		return err
 	}
 
-	for event := range logStream {
-		eventTs, _ := parseMacTimestamp(event["timestamp"].(string))
-		publishEvent(bt, event)
-		counter++
-		if counter%100 == 0 {
-			writeTimestamp(eventTs, path.Join(bt.config.CacheDir, timestampFile))
+	ticker := time.NewTicker(bt.config.Period)
+	var counter int
+	for {
+		select {
+		case <-bt.done:
+			return nil
+		case <-ticker.C:
+
+		case event := <-logStream:
+			eventTs, _ := parseMacTimestamp(event["timestamp"].(string))
+			publishEvent(bt, event)
+			counter++
+			if counter%100 == 0 {
+				writeTimestamp(eventTs, timestampFile)
+			}
+
 		}
 	}
-	return nil
 }
 
 // Stop stops macoslogbeat.
