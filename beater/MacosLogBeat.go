@@ -179,7 +179,11 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 	}
 
 	args := buildArgs("stream", bt.config.ExcludedSubsystems)
-	logStream, err := readLogWithArgs(args, 1)
+	var skipLines int = 0
+	if len(bt.config.ExcludedSubsystems) > 0 {
+		skipLines = 1
+	}
+	logStream, err := readLogWithArgs(args, skipLines)
 	if err != nil {
 		return err
 	}
@@ -199,7 +203,6 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 			if counter%100 == 0 {
 				writeTimestamp(eventTs, timestampFile)
 			}
-
 		}
 	}
 }
