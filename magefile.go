@@ -55,7 +55,19 @@ func Fields() error {
 
 // Config generates both the short/reference/docker configs.
 func Config() error {
-	return devtools.Config(devtools.AllConfigTypes, devtools.ConfigFileParams{}, ".")
+	params := devtools.ConfigFileParams{
+		ShortParts: []string{
+			devtools.OSSBeatDir("_meta/beat.yml"),
+			devtools.OSSBeatDir("_meta/macoslogbeat.yml.tmpl"),
+		},
+		ExtraVars: map[string]interface{}{
+			"BeatName":                       "macoslogbeat",
+			"UseKubernetesMetadataProcessor": false,
+			"UseDockerMetadataProcessor":     false,
+			"UseCloudMetadataProcessor":      false,
+		},
+	}
+	return devtools.Config(devtools.ShortConfigType, params, ".")
 }
 
 // Clean cleans all generated files and build artifacts.
