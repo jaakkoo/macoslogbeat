@@ -9,26 +9,12 @@ Ensure that this folder is at the following location:
 
 ### Requirements
 
-* [Golang](https://golang.org/dl/) 1.7
-
-### Init Project
-To get running with MacosLogbeat and also install the
-dependencies, run the following command:
-
-```
-make setup
-```
-
-It will create a clean git history for each major step. Note that you can always rewrite the history if you wish before pushing your changes.
-
-To push MacosLogbeat in the git repository, run the following commands:
-
-```
-git remote set-url origin https://github.com/jaakkoo/macoslogbeat
-git push origin master
-```
+* [Golang](https://golang.org/dl/) 1.14
+* [mage](https://github.com/magefile/mage) 1.8.0
 
 For further development, check out the [beat developer guide](https://www.elastic.co/guide/en/beats/libbeat/current/new-beat.html).
+
+Make sure you have ${GOPATH} set and ${GOPATH}/bin in PATH.
 
 ### Build
 
@@ -52,6 +38,7 @@ To run MacosLogbeat with debugging output enabled, run:
 ### Test
 
 To test MacosLogbeat, run the following command:
+(As of writing this there are no tests, but maybe this changes over time)
 
 ```
 make testsuite
@@ -110,7 +97,7 @@ For further development, check out the [beat developer guide](https://www.elasti
 The beat frameworks provides tools to crosscompile and package your beat for different platforms. This requires [docker](https://www.docker.com/) and vendoring as described above. To build packages of your beat, run the following command:
 
 ```
-make release
+PLATFORMS="darwin/amd64" make release
 ```
 
 This will fetch and create all images required for the build process. The whole process to finish can take several minutes.
