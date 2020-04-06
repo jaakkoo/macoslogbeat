@@ -172,12 +172,6 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 		return err
 	}
 
-	timestampFile := path.Join(bt.config.CacheDir, "timestamp")
-	if err = publishOldLogs(bt, timestampFile); err != nil {
-		logp.Err("Problems when publishing old logs: %v", err)
-
-	}
-
 	args := buildArgs("stream", bt.config.ExcludedSubsystems)
 	var skipLines int = 0
 	if len(bt.config.ExcludedSubsystems) > 0 {
@@ -186,6 +180,12 @@ func (bt *macoslogbeat) Run(b *beat.Beat) error {
 	logStream, err := readLogWithArgs(args, skipLines)
 	if err != nil {
 		return err
+	}
+
+	timestampFile := path.Join(bt.config.CacheDir, "timestamp")
+	if err = publishOldLogs(bt, timestampFile); err != nil {
+		logp.Err("Problems when publishing old logs: %v", err)
+
 	}
 
 	ticker := time.NewTicker(bt.config.Period)
