@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadDescription</key>
+			<string>Configures System Logging settings</string>
+			<key>PayloadDisplayName</key>
+			<string>System Logging</string>
+			<key>PayloadIdentifier</key>
+			<string>com.company.mdm.identifier.652D1AF2-2D2C-48F2-8842-7846323E2F21.com.apple.system.logging.3DA911A8-EB21-4D63-8227-AC0CFD002896</string>
+			<key>PayloadOrganization</key>
+			<string></string>
+			<key>PayloadType</key>
+			<string>com.apple.system.logging</string>
+			<key>PayloadUUID</key>
+			<string>3DA911A8-EB21-4D63-8227-AC0CFD002896</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>System</key>
+			<dict>
+				<key>Enable-Private-Data</key>
+				<true/>
+			</dict>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>Set private log On.</string>
+	<key>PayloadDisplayName</key>
+	<string>Logging</string>
+	<key>PayloadIdentifier</key>
+	<string>com.company.mdm.identifier.652D1AF2-2D2C-48F2-8842-7846323E2F21</string>
+	<key>PayloadOrganization</key>
+	<string>company</string>
+	<key>PayloadScope</key>
+	<string>System</string>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>652D1AF2-2D2C-48F2-8842-7846323E2F21</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
