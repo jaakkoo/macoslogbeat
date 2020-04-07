@@ -104,3 +104,36 @@ This will fetch and create all images required for the build process. The whole 
 
 It will also generate Macos installer (.pkg) and it is made available in the same directory (build/) than everything
 else.
+
+## Install
+
+Once macoslogbeat-<version>.pkg package is installed the files will be available in `/opt/macoslogbeat`
+
+The easiest way to verify the application works is to run it manually from commandline:
+`sudo /opt/macoslogbeat/macoslogbeat -c /opt/macoslogbeat/macoslogbeat.yml -e`. 
+
+Get the help: `sudo /opt/macoslogbeat/macoslogbeat -h`
+
+### Configuration
+All configuration is located in `/opt/macoslogbeat/macoslogbeat.yml`
+
+### Run automatically
+
+The launchd configuration is available in `/opt/macoslogbeat/install/com.reaktor.macoslogbeat.plist`.
+
+Install it: `sudo launchctl load /opt/macoslogbeat/install/com.reaktor.macoslogbeat.plist`
+
+Start it: `sudo launchctl start com.reaktor.macoslogbeat`.
+
+Launcd will configure `macoslogbeat` to start automatically when OS boots. If you wish to change the behaviour edit the plist.
+
+## Uninstall
+
+First unload the launchd config
+`sudo launchctl unload /opt/macoslogbeat/install/com.reaktor.macoslogbeat.plist`
+
+Remove the package from database
+`sudo pkgutil --forget com.reaktor.macoslogbeat`
+
+Delete all files
+`rm -rf /opt/macoslogbeat`

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>org.reaktor.macoslogbeat</string>
+    <key>ServiceDescription</key>
+        <string>MacOS Distributed log shipper</string>
+    <key>Program</key>
+        <string>/opt/macoslogbeat/macoslogbeat</string>
+    <key>ProgramArguments</key>
+    <array>             
+        <string>/opt/macoslogbeat/macoslogbeat</string>
+        <string>-c</string>
+        <string>/opt/macoslogbeat/macoslogbeat.yml</string>
+    </array>
+    <key>RunAtLoad</key>
+        <true/>
+    <key>KeepAlive</key>
+        <true/>
+</dict>
+</plist>

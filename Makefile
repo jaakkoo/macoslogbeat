@@ -14,6 +14,9 @@ CHECK_HEADERS_DISABLED=true
 LOGBEAT_BINARY := $(CURDIR)/build/golang-crossbuild/macoslogbeat-darwin-amd64
 LOGBEAT_CONF := $(CURDIR)/macoslogbeat.yml
 LOGBEAT_FOLDER := $(CURDIR)/build/pkg
+BUILDROOT := $(LOGBEAT_FOLDER)/buildroot/opt/macoslogbeat
+LOGBEAT_LAUNCHCTL := $(CURDIR)/macos/com.reaktor.macoslogbeat.plist
+LOGBEAT_PROFILE := $(CURDIR)/macos/Logging.mobileconfig
 LOGBEAT_VERSION := 0.0.1
 LOGBEAT_PKG := $(LOGBEAT_FOLDER)/macoslogbeat-$(LOGBEAT_VERSION).pkg
 
@@ -31,9 +34,11 @@ $(LOGBEAT_CONF): update
 $(LOGBEAT_BINARY): $(LOGBEAT_CONF) release
 
 $(LOGBEAT_PKG): $(LOGBEAT_BINARY)
-	mkdir -p $(LOGBEAT_FOLDER)/buildroot/opt/macoslogbeat
-	cp $(LOGBEAT_BINARY) $(LOGBEAT_FOLDER)/buildroot/opt/macoslogbeat/macoslogbeat
-	cp $(LOGBEAT_CONF) $(LOGBEAT_FOLDER)/buildroot/opt/macoslogbeat
+	mkdir -p $(BUILDROOT)/install
+	cp $(LOGBEAT_BINARY) $(BUILDROOT)/macoslogbeat
+	cp $(LOGBEAT_CONF) $(BUILDROOT)
+	cp $(LOGBEAT_LAUNCHCTL) $(BUILDROOT)/install/
+	cp $(LOGBEAT_PROFILE) $(BUILDROOT)/install/
 	pkgbuild \
 		--identifier com.reaktor.macoslogbeat \
 		--root $(LOGBEAT_FOLDER)/buildroot/ \
