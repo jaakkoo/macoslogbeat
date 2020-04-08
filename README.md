@@ -34,6 +34,11 @@ To run MacosLogbeat with debugging output enabled, run:
 ./macoslogbeat -c macoslogbeat.yml -e -d "*"
 ```
 
+### Development with elasticsearch and kibana
+
+Run `docker-compose up` to start elasticsearch and kibana locally to start testing macoslogbeat.
+
+After the apps have started elasticsearch is available in `http://localhost:9200` and kibana in `http://localhost:5601`.
 
 ### Test
 
