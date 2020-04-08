@@ -11,6 +11,7 @@ Ensure that this folder is at the following location:
 
 * [Golang](https://golang.org/dl/) 1.14
 * [mage](https://github.com/magefile/mage) 1.8.0
+* [Python](https://www.python.org/downloads/) 2.7 (I'm really sorry about the 2.7 requirement but it comes from libbeat)
 
 For further development, check out the [beat developer guide](https://www.elastic.co/guide/en/beats/libbeat/current/new-beat.html).
 
