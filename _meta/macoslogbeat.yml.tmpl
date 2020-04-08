@@ -94,6 +94,9 @@ output.elasticsearch:
 
 processors:
   - add_host_metadata: ~
+  - drop_fields:
+      fields: ['unifiedlog.backtrace']
+      ignore_missing: true
 {{- if .UseCloudMetadataProcessor }}
   - add_cloud_metadata: ~{{ end }}
 {{- if .UseDockerMetadataProcessor }}

@@ -4,7 +4,7 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>org.reaktor.macoslogbeat</string>
+    <string>com.reaktor.macoslogbeat</string>
     <key>ServiceDescription</key>
         <string>MacOS Distributed log shipper</string>
     <key>Program</key>

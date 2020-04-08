@@ -106,6 +106,9 @@ output.elasticsearch:
 
 processors:
   - add_host_metadata: ~
+  - drop_fields:
+      fields: ['unifiedlog.backtrace']
+      ignore_missing: true
 
 #================================ Logging =====================================
 
