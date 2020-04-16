@@ -17,7 +17,7 @@ LOGBEAT_FOLDER := $(CURDIR)/build/pkg
 BUILDROOT := $(LOGBEAT_FOLDER)/buildroot/opt/macoslogbeat
 LOGBEAT_LAUNCHCTL := $(CURDIR)/macos/com.reaktor.macoslogbeat.plist
 LOGBEAT_PROFILE := $(CURDIR)/macos/Logging.mobileconfig
-LOGBEAT_VERSION := 0.0.1
+LOGBEAT_VERSION := 0.0.2
 LOGBEAT_PKG := $(LOGBEAT_FOLDER)/macoslogbeat-$(LOGBEAT_VERSION).pkg
 
 export PLATFORMS := darwin/amd64

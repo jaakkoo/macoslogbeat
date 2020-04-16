@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"path"
 	"strings"
@@ -137,6 +138,10 @@ func readLogWithArgs(commandArgs []string, skipLines int) (<-chan common.MapStr,
 
 func publishOldLogs(bt *macoslogbeat, timeStampFile string) error {
 	var err error
+	if _, err := os.Stat(timeStampFile); err != nil {
+		logp.Info("Timestamp does not exist, this is probably the first run.")
+		return nil
+	}
 
 	lastPublish, err := readTimestamp(timeStampFile)
 	if err != nil {
