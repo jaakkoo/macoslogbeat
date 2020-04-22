@@ -1,11 +1,26 @@
 # MacosLogbeat
 
-Welcome to MacosLogbeat.
+Macoslogbeat is a log shipper for macos unified logs like journalbeat is for journald.
+
+It's only tested to work on macos Catalina (10.15), but I bet it would work on any macos release that uses unified log.
+
+# Installing
+
+1. Pick the latest [release](https://github.com/jaakkoo/macoslogbeat/releases)
+2. Install it either by doubleclicking the pkg or with installer (`sudo installer -pkg macoslogbeat-<version>.pkg -target /`)
+3. Configure `/opt/macoslogbeat/macoslogbeat.yml`.
+    * Mainly elasticsearch/logstash/etc. location is required to get started
+
+Optional steps:
+
+4. Install profile to see <private> log fields also (located in `/opt/macososlogbeat/macos/Logging.mobileconfig`)
+5. Install launchd configuration to run it automatically when os boots and restart on crash: `sudo launchctl load /opt/macoslogbeat/install/com.reaktor.macoslogbeat.plist`
+6. Run the service: `sudo launchctl start com.reaktor.macoslogbeat`
+
+# Development
 
 Ensure that this folder is at the following location:
 `${GOPATH}/src/github.com/jaakkoo/macoslogbeat`
-
-## Getting Started with MacosLogbeat
 
 ### Requirements
 
