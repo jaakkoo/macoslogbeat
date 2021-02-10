@@ -1,5 +1,5 @@
-= MacosLogbeat Docs
+= {Beat} Docs
 
-Welcome to the MacosLogbeat documentation.
+Welcome to the {Beat} documentation.
 
 

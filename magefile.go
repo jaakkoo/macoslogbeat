@@ -9,24 +9,20 @@ import (
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 
-	devtools "github.com/elastic/beats/dev-tools/mage"
-	"github.com/elastic/beats/dev-tools/mage/target/build"
-	"github.com/elastic/beats/dev-tools/mage/target/common"
-	"github.com/elastic/beats/dev-tools/mage/target/pkg"
-	"github.com/elastic/beats/dev-tools/mage/target/unittest"
-	"github.com/elastic/beats/generator/common/beatgen"
+	devtools "github.com/elastic/beats/v7/dev-tools/mage"
+	"github.com/elastic/beats/v7/dev-tools/mage/target/build"
+	"github.com/elastic/beats/v7/dev-tools/mage/target/common"
+	"github.com/elastic/beats/v7/dev-tools/mage/target/pkg"
+	"github.com/elastic/beats/v7/dev-tools/mage/target/unittest"
 )
 
 func init() {
 	devtools.SetBuildVariableSources(devtools.DefaultBeatBuildVariableSources)
 
-	devtools.BeatDescription = "MacOS unified log shipper"
+	devtools.BeatDescription = "One sentence description of the Beat."
 	devtools.BeatVendor = "Jaakko Aro"
-}
-
-// VendorUpdate updates elastic/beats in the vendor dir
-func VendorUpdate() error {
-	return beatgen.VendorUpdate()
+	devtools.BeatProjectType = devtools.CommunityProject
+	devtools.CrossBuildMountModcache = true
 }
 
 // Package packages the Beat for distribution.
@@ -55,19 +51,9 @@ func Fields() error {
 
 // Config generates both the short/reference/docker configs.
 func Config() error {
-	params := devtools.ConfigFileParams{
-		ShortParts: []string{
-			devtools.OSSBeatDir("_meta/beat.yml"),
-			devtools.OSSBeatDir("_meta/macoslogbeat.yml.tmpl"),
-		},
-		ExtraVars: map[string]interface{}{
-			"BeatName":                       "macoslogbeat",
-			"UseKubernetesMetadataProcessor": false,
-			"UseDockerMetadataProcessor":     false,
-			"UseCloudMetadataProcessor":      false,
-		},
-	}
-	return devtools.Config(devtools.ShortConfigType, params, ".")
+	p := devtools.DefaultConfigFileParams()
+	p.Templates = append(p.Templates, "_meta/config/*.tmpl")
+	return devtools.Config(devtools.AllConfigTypes, p, ".")
 }
 
 // Clean cleans all generated files and build artifacts.
