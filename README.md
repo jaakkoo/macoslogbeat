@@ -19,18 +19,15 @@ Optional steps:
 
 # Development
 
-Ensure that this folder is at the following location:
-`${GOPATH}/src/github.com/jaakkoo/macoslogbeat`
-
 ### Requirements
 
-* [Golang](https://golang.org/dl/) 1.14
+* [Golang](https://golang.org/dl/) 1.15.7
 * [mage](https://github.com/magefile/mage) 1.8.0
-* [Python](https://www.python.org/downloads/) 2.7 (I'm really sorry about the 2.7 requirement but it comes from libbeat)
+* [Python](https://www.python.org/downloads/) >3.7 (for config file generation)
 
 For further development, check out the [beat developer guide](https://www.elastic.co/guide/en/beats/libbeat/current/new-beat.html).
 
-Make sure you have ${GOPATH} set and ${GOPATH}/bin in PATH.
+Make sure you have ${GOPATH}/bin in PATH.
 
 ### Build
 
@@ -132,6 +129,8 @@ Once macoslogbeat-<version>.pkg package is installed the files will be available
 
 The easiest way to verify the application works is to run it manually from commandline:
 `sudo /opt/macoslogbeat/macoslogbeat -c /opt/macoslogbeat/macoslogbeat.yml -e`. 
+
+Note! Running with sudo is optional, but unless you ran it with enough priviledges most of the log messages are hidden
 
 Get the help: `sudo /opt/macoslogbeat/macoslogbeat -h`
 
