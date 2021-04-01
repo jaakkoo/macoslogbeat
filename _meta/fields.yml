@@ -13,7 +13,7 @@
           type: keyword
         - name: traceID
           required: false
-          type: long
+          type: keyword
         - name: threadID
           required: false
           type: long

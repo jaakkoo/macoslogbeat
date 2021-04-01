@@ -8850,7 +8850,7 @@ required: False
 *`unifiedlog.traceID`*::
 +
 --
-type: long
+type: keyword
 
 required: False
 
