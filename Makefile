@@ -12,7 +12,7 @@ MAGE_IMPORT_PATH=github.com/magefile/mage
 NO_COLLECT=true
 CHECK_HEADERS_DISABLED=true
 
-LOGBEAT_VERSION := 1.0.0
+LOGBEAT_VERSION := 1.0.1
 LOGBEAT_BINARY := $(CURDIR)/build/golang-crossbuild/macoslogbeat-darwin-amd64
 LOGBEAT_FOLDER := $(CURDIR)/build/pkg
 LOGBEAT_CONF := $(CURDIR)/macoslogbeat.yml
