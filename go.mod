@@ -29,10 +29,8 @@ require (
 	github.com/elastic/beats/v7 v7.0.0-alpha2.0.20210208210832-2363df416081
 	github.com/elastic/go-sysinfo v1.5.0 // indirect
 	github.com/fatih/color v1.10.0 // indirect
-	github.com/garyburd/redigo v1.0.1-0.20160525165706-b8dc90050f24 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
-	github.com/gophercloud/gophercloud v0.1.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/josephspurrier/goversioninfo v1.2.0 // indirect
 	github.com/magefile/mage v1.11.0
@@ -50,12 +48,10 @@ require (
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
-	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/tools v0.1.0
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	honnef.co/go/tools v0.1.1 // indirect
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect
-	k8s.io/klog v1.0.0 // indirect
-	sigs.k8s.io/structured-merge-diff/v3 v3.0.0 // indirect
 )
